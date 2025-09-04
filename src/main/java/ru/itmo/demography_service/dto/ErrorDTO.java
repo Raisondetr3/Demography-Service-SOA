@@ -1,0 +1,25 @@
+package ru.itmo.demography_service.dto;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
+
+import java.time.LocalDateTime;
+
+@Getter
+@AllArgsConstructor
+public class ErrorDTO {
+    private final int status;
+    private final String error;
+    private final String message;
+
+    @JsonFormat(pattern = "yyyy-MM-dd'T'HH:mm:ss")
+    private final LocalDateTime timestamp;
+
+    private final String path;
+
+    public ErrorDTO(int status, String error, String message, LocalDateTime timestamp) {
+        this(status, error, message, timestamp, null);
+    }
+}

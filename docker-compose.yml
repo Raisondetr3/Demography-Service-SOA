@@ -1,0 +1,14 @@
+version: '3.8'
+
+services:
+  demography-service:
+    build: .
+    container_name: demography-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SPRING_PROFILES_ACTIVE=docker
+      - SERVER_PORT=8081
+      - PERSON_SERVICE_URL=http://localhost:8080
+    volumes:
+      - ./logs:/app/logs
