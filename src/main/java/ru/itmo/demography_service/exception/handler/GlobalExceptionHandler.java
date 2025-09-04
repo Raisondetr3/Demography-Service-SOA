@@ -30,14 +30,14 @@ public class GlobalExceptionHandler {
         log.error("Person service exception: {}", e.getMessage(), e);
 
         ErrorDTO error = new ErrorDTO(
-                e.getStatusCode(),
+                HttpStatus.SERVICE_UNAVAILABLE.value(),
                 "EXTERNAL_SERVICE_ERROR",
                 e.getMessage(),
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(e.getStatusCode()).body(error);
+        return ResponseEntity.status(HttpStatus.SERVICE_UNAVAILABLE).body(error);
     }
 
     @ExceptionHandler(FeignException.class)
@@ -138,21 +138,21 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(error);
     }
 
-    @ExceptionHandler(TimeoutException.class)
+    @ExceptionHandler({TimeoutException.class, SocketTimeoutException.class})
     public ResponseEntity<ErrorDTO> handleTimeoutException(
-            TimeoutException e, HttpServletRequest request) {
+            Exception e, HttpServletRequest request) {
 
         log.error("Timeout exception: {}", e.getMessage(), e);
 
         ErrorDTO error = new ErrorDTO(
                 HttpStatus.GATEWAY_TIMEOUT.value(),
                 "TIMEOUT_ERROR",
-                "Request timeout while calling external service",
+                "Timeout calling external service",
                 LocalDateTime.now(),
                 request.getRequestURI()
         );
 
-        return ResponseEntity.status(HttpStatus.REQUEST_TIMEOUT).body(error);
+        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(error);
     }
 
     @ExceptionHandler(IllegalArgumentException.class)
@@ -187,23 +187,6 @@ public class GlobalExceptionHandler {
         );
 
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(error);
-    }
-
-    @ExceptionHandler({TimeoutException.class, SocketTimeoutException.class})
-    public ResponseEntity<ErrorDTO> handleTimeoutException(
-            Exception e, HttpServletRequest request) {
-
-        log.error("Timeout exception: {}", e.getMessage(), e);
-
-        ErrorDTO error = new ErrorDTO(
-                HttpStatus.GATEWAY_TIMEOUT.value(),
-                "TIMEOUT_ERROR",
-                "Timeout calling external service",
-                LocalDateTime.now(),
-                request.getRequestURI()
-        );
-
-        return ResponseEntity.status(HttpStatus.GATEWAY_TIMEOUT).body(error);
     }
 
     @ExceptionHandler(HttpRequestMethodNotSupportedException.class)
