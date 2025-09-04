@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   demography-service:
     build: .
@@ -12,3 +10,9 @@ services:
       - PERSON_SERVICE_URL=http://localhost:8080
     volumes:
       - ./logs:/app/logs
+    networks:
+      - checklist-network
+
+networks:
+  checklist-network:
+    external: true
