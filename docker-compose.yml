@@ -8,8 +8,6 @@ services:
       - SPRING_PROFILES_ACTIVE=docker
       - SERVER_PORT=8081
       - PERSON_SERVICE_URL=http://localhost:8080
-    volumes:
-      - ./logs:/app/logs
     networks:
       - checklist-network
 
