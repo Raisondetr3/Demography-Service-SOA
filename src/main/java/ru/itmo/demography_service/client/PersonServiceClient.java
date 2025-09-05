@@ -1,6 +1,7 @@
 package ru.itmo.demography_service.client;
 
 import org.springframework.cloud.openfeign.FeignClient;
+import org.springframework.data.domain.Page;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import ru.itmo.demography_service.config.FeignConfig;
@@ -15,15 +16,15 @@ import java.util.List;
 )
 public interface PersonServiceClient {
 
-    @GetMapping("/api/persons")
+    @GetMapping("/persons")
     List<PersonDTO> getAllPersons();
 
-    @GetMapping("/api/persons/{id}")
+    @GetMapping("/persons/{id}")
     PersonDTO getPersonById(@PathVariable Integer id);
 
-    @GetMapping("/api/persons/nationality-less-than/{nationality}")
+    @GetMapping("/persons/nationality-less-than/{nationality}")
     List<PersonDTO> getPersonsByNationalityLessThan(@PathVariable String nationality);
 
-    @GetMapping("/api/persons/count")
+    @GetMapping("/persons/count")
     Long getPersonsCount();
 }

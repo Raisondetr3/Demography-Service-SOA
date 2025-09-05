@@ -2,6 +2,7 @@ package ru.itmo.demography_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.itmo.demography_service.client.PersonServiceClient;
 import ru.itmo.demography_service.client.dto.PersonDTO;
