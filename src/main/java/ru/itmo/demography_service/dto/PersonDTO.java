@@ -8,12 +8,12 @@ import ru.itmo.demography_service.dto.enums.Country;
 import java.time.LocalDateTime;
 
 public record PersonDTO(
-        int id,
+        Integer id,
         String name,
         CoordinatesDTO coordinates,
         LocalDateTime creationDate,
         Long height,
-        float weight,
+        Float weight,
         Color hairColor,
         Country nationality,
         LocationDTO location
