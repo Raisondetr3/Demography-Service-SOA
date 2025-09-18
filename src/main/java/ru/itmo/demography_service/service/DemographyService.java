@@ -2,10 +2,9 @@ package ru.itmo.demography_service.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.data.domain.Page;
 import org.springframework.stereotype.Service;
 import ru.itmo.demography_service.client.PersonServiceClient;
-import ru.itmo.demography_service.client.dto.PersonDTO;
+import ru.itmo.demography_service.dto.PersonDTO;
 import ru.itmo.demography_service.dto.HairColorStatsDTO;
 import ru.itmo.demography_service.dto.NationalityEyeColorStatsDTO;
 import ru.itmo.demography_service.dto.enums.Color;
@@ -79,7 +78,7 @@ public class DemographyService {
             }
 
             long eyeColorCount = nationalityPersons.stream()
-                    .filter(person -> Objects.equals(eyeColor, person.hairColor()))
+                    .filter(person -> Objects.equals(eyeColor, person.eyeColor()))
                     .count();
 
             long totalNationalityCount = nationalityPersons.size();
@@ -174,9 +173,13 @@ public class DemographyService {
                     .filter(person -> person.hairColor() == null)
                     .count();
 
-            if (nullNationalityCount > 0 || nullHairColorCount > 0) {
-                log.warn("Found {} persons with null nationality and {} with null hair color",
-                        nullNationalityCount, nullHairColorCount);
+            long nullEyeColorCount = persons.stream()
+                    .filter(person -> person.eyeColor() == null)
+                    .count();
+
+            if (nullNationalityCount > 0 || nullHairColorCount > 0 || nullEyeColorCount > 0) {
+                log.warn("Found {} persons with null nationality, {} with null hair color, and {} with null eye color",
+                        nullNationalityCount, nullHairColorCount, nullEyeColorCount);
             }
 
             return persons;

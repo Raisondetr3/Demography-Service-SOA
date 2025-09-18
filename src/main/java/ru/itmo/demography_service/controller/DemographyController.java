@@ -20,34 +20,34 @@ import ru.itmo.demography_service.service.DemographyService;
 @RequestMapping("/demography")
 @RequiredArgsConstructor
 @Slf4j
-@Tag(name = "Demography", description = "Демографический анализ популяции")
+@Tag(name = "Demography", description = "Demographic analysis of population")
 public class DemographyController {
 
     private final DemographyService demographyService;
 
     @Operation(
-            summary = "Получить процент людей по цвету волос",
-            description = "Вычисляет процентное соотношение людей с указанным цветом волос относительно общей популяции"
+            summary = "Get percentage of people by hair color",
+            description = "Calculate percentage ratio of people with specified hair color relative to total population"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Статистика успешно рассчитана"),
-            @ApiResponse(responseCode = "400", description = "Некорректный параметр hairColor"),
-            @ApiResponse(responseCode = "404", description = "Endpoint не найден"),
-            @ApiResponse(responseCode = "405", description = "Метод не поддерживается"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
-            @ApiResponse(responseCode = "503", description = "Person Service недоступен"),
-            @ApiResponse(responseCode = "504", description = "Таймаут при обращении к Person Service")
+            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid hairColor parameter"),
+            @ApiResponse(responseCode = "404", description = "Endpoint not found"),
+            @ApiResponse(responseCode = "405", description = "Method not supported"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "503", description = "Person Service unavailable"),
+            @ApiResponse(responseCode = "504", description = "Timeout when calling Person Service")
     })
     @GetMapping("/hair-color/{hairColor}/percentage")
     public ResponseEntity<HairColorStatsDTO> getHairColorPercentage(
-            @Parameter(description = "Цвет волос (GREEN, BLUE, ORANGE, BROWN)", required = true)
+            @Parameter(description = "Hair color (GREEN, BLUE, ORANGE, BROWN)", required = true)
             @PathVariable String hairColor) {
 
-        log.info("Получен запрос на процент по цвету волос: {}", hairColor);
+        log.info("Received request for hair color percentage: {}", hairColor);
 
         if (hairColor == null || hairColor.trim().isEmpty()) {
             throw new InvalidParameterException("hairColor", hairColor,
-                    "Параметр hairColor не может быть пустым");
+                    "Parameter hairColor cannot be empty");
         }
 
         Color parsedColor = parseColor(hairColor);
@@ -57,34 +57,34 @@ public class DemographyController {
     }
 
     @Operation(
-            summary = "Получить статистику по национальности и цвету глаз",
-            description = "Подсчитывает количество людей с определенным цветом глаз в рамках указанной национальности"
+            summary = "Get statistics by nationality and eye color",
+            description = "Count the number of people with specific eye color within specified nationality"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Статистика успешно рассчитана"),
-            @ApiResponse(responseCode = "400", description = "Некорректные параметры nationality или eyeColor"),
-            @ApiResponse(responseCode = "404", description = "Endpoint не найден"),
-            @ApiResponse(responseCode = "405", description = "Метод не поддерживается"),
-            @ApiResponse(responseCode = "500", description = "Внутренняя ошибка сервера"),
-            @ApiResponse(responseCode = "503", description = "Person Service недоступен"),
-            @ApiResponse(responseCode = "504", description = "Таймаут при обращении к Person Service")
+            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully"),
+            @ApiResponse(responseCode = "400", description = "Invalid nationality or eyeColor parameters"),
+            @ApiResponse(responseCode = "404", description = "Endpoint not found"),
+            @ApiResponse(responseCode = "405", description = "Method not supported"),
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "503", description = "Person Service unavailable"),
+            @ApiResponse(responseCode = "504", description = "Timeout when calling Person Service")
     })
     @GetMapping("/nationality/{nationality}/eye-color/{eyeColor}")
     public ResponseEntity<NationalityEyeColorStatsDTO> getNationalityEyeColorStats(
-            @Parameter(description = "Национальность (FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA)", required = true)
+            @Parameter(description = "Nationality (FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA)", required = true)
             @PathVariable String nationality,
-            @Parameter(description = "Цвет глаз (GREEN, BLUE, ORANGE, BROWN)", required = true)
+            @Parameter(description = "Eye color (GREEN, BLUE, ORANGE, BROWN)", required = true)
             @PathVariable String eyeColor) {
 
-        log.info("Получен запрос на статистику: {} - {}", nationality, eyeColor);
+        log.info("Received request for statistics: {} - {}", nationality, eyeColor);
 
         if (nationality == null || nationality.trim().isEmpty()) {
             throw new InvalidParameterException("nationality", nationality,
-                    "Параметр nationality не может быть пустым");
+                    "Parameter nationality cannot be empty");
         }
         if (eyeColor == null || eyeColor.trim().isEmpty()) {
             throw new InvalidParameterException("eyeColor", eyeColor,
-                    "Параметр eyeColor не может быть пустым");
+                    "Parameter eyeColor cannot be empty");
         }
 
         Country parsedNationality = parseCountry(nationality);
@@ -101,9 +101,9 @@ public class DemographyController {
             return Color.valueOf(colorStr.toUpperCase().trim());
         } catch (IllegalArgumentException e) {
             throw new InvalidParameterException("color", colorStr,
-                    "Недопустимый цвет '" + colorStr + "'. Разрешенные значения: GREEN, BLUE, ORANGE, BROWN");
+                    "Invalid color '" + colorStr + "'. Allowed values: GREEN, BLUE, ORANGE, BROWN");
         } catch (NullPointerException e) {
-            throw new InvalidParameterException("color", null, "Цвет не может быть null");
+            throw new InvalidParameterException("color", null, "Color cannot be null");
         }
     }
 
@@ -112,9 +112,9 @@ public class DemographyController {
             return Country.valueOf(countryStr.toUpperCase().trim());
         } catch (IllegalArgumentException e) {
             throw new InvalidParameterException("nationality", countryStr,
-                    "Недопустимая национальность '" + countryStr + "'. Разрешенные значения: FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA");
+                    "Invalid nationality '" + countryStr + "'. Allowed values: FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA");
         } catch (NullPointerException e) {
-            throw new InvalidParameterException("nationality", null, "Национальность не может быть null");
+            throw new InvalidParameterException("nationality", null, "Nationality cannot be null");
         }
     }
 }

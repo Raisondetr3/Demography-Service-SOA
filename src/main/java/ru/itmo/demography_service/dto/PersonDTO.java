@@ -1,4 +1,4 @@
-package ru.itmo.demography_service.client.dto;
+package ru.itmo.demography_service.dto;
 
 import ru.itmo.demography_service.dto.CoordinatesDTO;
 import ru.itmo.demography_service.dto.LocationDTO;
@@ -15,6 +15,7 @@ public record PersonDTO(
         Long height,
         Float weight,
         Color hairColor,
+        Color eyeColor,
         Country nationality,
         LocationDTO location
 ) {}
