@@ -30,7 +30,6 @@ public class GlobalExceptionHandler {
         log.error("Person service exception: {}", e.getMessage(), e);
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.SERVICE_UNAVAILABLE.value(),
                 "EXTERNAL_SERVICE_ERROR",
                 e.getMessage(),
                 LocalDateTime.now(),
@@ -54,7 +53,6 @@ public class GlobalExceptionHandler {
         };
 
         ErrorDTO error = new ErrorDTO(
-                correctStatus.value(),
                 "EXTERNAL_SERVICE_ERROR",
                 determineFeignErrorMessage(e),
                 LocalDateTime.now(),
@@ -71,7 +69,6 @@ public class GlobalExceptionHandler {
         log.warn("Invalid parameter: {}", e.getMessage());
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
                 "INVALID_PARAMETER",
                 e.getMessage(),
                 LocalDateTime.now(),
@@ -94,7 +91,6 @@ public class GlobalExceptionHandler {
         );
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
                 "INVALID_PARAMETER_TYPE",
                 message,
                 LocalDateTime.now(),
@@ -111,7 +107,6 @@ public class GlobalExceptionHandler {
         log.warn("HTTP message not readable: {}", e.getMessage());
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
                 "INVALID_REQUEST_BODY",
                 "Invalid JSON format or request body",
                 LocalDateTime.now(),
@@ -128,7 +123,6 @@ public class GlobalExceptionHandler {
         log.warn("No handler found: {}", e.getRequestURL());
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.NOT_FOUND.value(),
                 "ENDPOINT_NOT_FOUND",
                 String.format("No handler found for %s %s", e.getHttpMethod(), e.getRequestURL()),
                 LocalDateTime.now(),
@@ -145,7 +139,6 @@ public class GlobalExceptionHandler {
         log.error("Timeout exception: {}", e.getMessage(), e);
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.GATEWAY_TIMEOUT.value(),
                 "TIMEOUT_ERROR",
                 "Timeout calling external service",
                 LocalDateTime.now(),
@@ -162,7 +155,6 @@ public class GlobalExceptionHandler {
         log.warn("Illegal argument: {}", e.getMessage());
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.BAD_REQUEST.value(),
                 "INVALID_ARGUMENT",
                 e.getMessage(),
                 LocalDateTime.now(),
@@ -179,7 +171,6 @@ public class GlobalExceptionHandler {
         log.error("Unexpected exception: {}", e.getMessage(), e);
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.INTERNAL_SERVER_ERROR.value(),
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred. Please try again later.",
                 LocalDateTime.now(),
@@ -194,7 +185,6 @@ public class GlobalExceptionHandler {
             HttpRequestMethodNotSupportedException e, HttpServletRequest request) {
 
         ErrorDTO error = new ErrorDTO(
-                HttpStatus.METHOD_NOT_ALLOWED.value(),
                 "METHOD_NOT_ALLOWED",
                 "Method " + e.getMethod() + " not supported for " + request.getRequestURI(),
                 LocalDateTime.now(),
