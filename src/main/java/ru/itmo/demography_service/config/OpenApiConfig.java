@@ -11,7 +11,6 @@ import java.util.List;
 
 @Configuration
 public class OpenApiConfig {
-
     @Value("${server.port:8081}")
     private String serverPort;
 

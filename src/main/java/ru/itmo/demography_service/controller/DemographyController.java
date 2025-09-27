@@ -3,6 +3,7 @@ package ru.itmo.demography_service.controller;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -33,35 +34,62 @@ public class DemographyController {
             description = "Calculate percentage ratio of people with specified hair color relative to total population"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully"),
-            @ApiResponse(responseCode = "422", description = "Invalid hairColor parameter", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Endpoint not found", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "405", description = "Method not supported", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "503", description = "Person Service unavailable", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "504", description = "Timeout when calling Person Service", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = HairColorStatsDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Hair Color Statistics",
+                                    value = """
+                                    {
+                                        "hairColor": "BLUE",
+                                        "percentage": 23.5,
+                                        "totalCount": 100,
+                                        "colorCount": 23
+                                    }
+                                    """
+                            ))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid hair color parameter",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDTO.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Invalid Enum Value",
+                                            description = "Hair color value is not valid",
+                                            value = """
+                                            {
+                                                "error": "INVALID_PARAMETER_TYPE",
+                                                "message": "Invalid value 'PURPLE' for parameter 'hairColor'. Expected one of: [GREEN, BLUE, ORANGE, BROWN]",
+                                                "timestamp": "2025-09-19T09:32:19.479Z",
+                                                "path": "/demography/hair-color/PURPLE/percentage"
+                                            }
+                                            """
+                                    ),
+                                    @ExampleObject(
+                                            name = "Empty Parameter",
+                                            description = "Hair color parameter is empty",
+                                            value = """
+                                            {
+                                                "error": "INVALID_REQUEST_PARAMETER",
+                                                "message": "Parameter hairColor cannot be empty",
+                                                "timestamp": "2025-09-19T09:32:19.479Z",
+                                                "path": "/demography/hair-color//percentage"
+                                            }
+                                            """
+                                    )
+                            })
+            )
     })
     @GetMapping("/hair-color/{hairColor}/percentage")
     public ResponseEntity<HairColorStatsDTO> getHairColorPercentage(
-            @Parameter(description = "Hair color (GREEN, BLUE, ORANGE, BROWN)", required = true)
-            @PathVariable String hairColor) {
+            @Parameter(description = "Hair color", required = true,
+                    schema = @Schema(implementation = Color.class,
+                            allowableValues = {"GREEN", "BLUE", "ORANGE", "BROWN"}))
+            @PathVariable Color hairColor) {
 
         log.info("Received request for hair color percentage: {}", hairColor);
 
-        if (hairColor == null || hairColor.trim().isEmpty()) {
-            throw new InvalidParameterException("hairColor", hairColor,
-                    "Parameter hairColor cannot be empty");
-        }
-
-        Color parsedColor = parseColor(hairColor);
-        HairColorStatsDTO stats = demographyService.calculateHairColorPercentage(parsedColor);
-
+        HairColorStatsDTO stats = demographyService.calculateHairColorPercentage(hairColor);
         return ResponseEntity.ok(stats);
     }
 
@@ -70,66 +98,80 @@ public class DemographyController {
             description = "Count the number of people with specific eye color within specified nationality"
     )
     @ApiResponses({
-            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully"),
-            @ApiResponse(responseCode = "422", description = "Invalid nationality or eyeColor parameters", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "404", description = "Endpoint not found", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "405", description = "Method not supported", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "500", description = "Internal server error", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "503", description = "Person Service unavailable", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class))),
-            @ApiResponse(responseCode = "504", description = "Timeout when calling Person Service", content = @Content(mediaType = "application/json",
-                    schema = @Schema(implementation = ErrorDTO.class)))
+            @ApiResponse(responseCode = "200", description = "Statistics calculated successfully",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = NationalityEyeColorStatsDTO.class),
+                            examples = @ExampleObject(
+                                    name = "Nationality Eye Color Statistics",
+                                    value = """
+                                    {
+                                        "nationality": "SPAIN",
+                                        "eyeColor": "GREEN",
+                                        "eyeColorCount": 15,
+                                        "totalNationalityCount": 45
+                                    }
+                                    """
+                            ))
+            ),
+            @ApiResponse(responseCode = "400", description = "Invalid nationality or eye color parameters",
+                    content = @Content(mediaType = "application/json",
+                            schema = @Schema(implementation = ErrorDTO.class),
+                            examples = {
+                                    @ExampleObject(
+                                            name = "Invalid Nationality",
+                                            description = "Nationality value is not valid",
+                                            value = """
+                                            {
+                                                "error": "INVALID_PARAMETER_TYPE",
+                                                "message": "Invalid value 'ATLANTIS' for parameter 'nationality'. Expected one of: [SPAIN, INDIA, VATICAN, SOUTH_KOREA, JAPAN]",
+                                                "timestamp": "2025-09-19T09:32:19.479Z",
+                                                "path": "/demography/nationality/ATLANTIS/eye-color/GREEN"
+                                            }
+                                            """
+                                    ),
+                                    @ExampleObject(
+                                            name = "Invalid Eye Color",
+                                            description = "Eye color value is not valid",
+                                            value = """
+                                            {
+                                                "error": "INVALID_PARAMETER_TYPE",
+                                                "message": "Invalid value 'PURPLE' for parameter 'eyeColor'. Expected one of: [GREEN, BLUE, ORANGE, BROWN]",
+                                                "timestamp": "2025-09-19T09:32:19.479Z",
+                                                "path": "/demography/nationality/SPAIN/eye-color/PURPLE"
+                                            }
+                                            """
+                                    ),
+                                    @ExampleObject(
+                                            name = "Multiple Invalid Parameters",
+                                            description = "Both parameters are invalid",
+                                            value = """
+                                            {
+                                                "error": "INVALID_PARAMETER_TYPE",
+                                                "message": "Invalid value 'ABC' for parameter 'nationality'. Expected one of: [SPAIN, INDIA, VATICAN, SOUTH_KOREA, JAPAN]",
+                                                "timestamp": "2025-09-19T09:32:19.479Z",
+                                                "path": "/demography/nationality/ABC/eye-color/XYZ"
+                                            }
+                                            """
+                                    )
+                            })
+            )
     })
     @GetMapping("/nationality/{nationality}/eye-color/{eyeColor}")
     public ResponseEntity<NationalityEyeColorStatsDTO> getNationalityEyeColorStats(
-            @Parameter(description = "Nationality (FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA)", required = true)
-            @PathVariable String nationality,
-            @Parameter(description = "Eye color (GREEN, BLUE, ORANGE, BROWN)", required = true)
-            @PathVariable String eyeColor) {
+            @Parameter(description = "Nationality", required = true,
+                    schema = @Schema(implementation = Country.class,
+                            allowableValues = {"SPAIN", "INDIA", "VATICAN", "SOUTH_KOREA", "JAPAN"}))
+            @PathVariable Country nationality,
+            @Parameter(description = "Eye color", required = true,
+                    schema = @Schema(implementation = Color.class,
+                            allowableValues = {"GREEN", "BLUE", "ORANGE", "BROWN"}))
+            @PathVariable Color eyeColor) {
 
         log.info("Received request for statistics: {} - {}", nationality, eyeColor);
 
-        if (nationality == null || nationality.trim().isEmpty()) {
-            throw new InvalidParameterException("nationality", nationality,
-                    "Parameter nationality cannot be empty");
-        }
-        if (eyeColor == null || eyeColor.trim().isEmpty()) {
-            throw new InvalidParameterException("eyeColor", eyeColor,
-                    "Parameter eyeColor cannot be empty");
-        }
-
-        Country parsedNationality = parseCountry(nationality);
-        Color parsedEyeColor = parseColor(eyeColor);
-
         NationalityEyeColorStatsDTO stats = demographyService
-                .calculateNationalityEyeColorStats(parsedNationality, parsedEyeColor);
+                .calculateNationalityEyeColorStats(nationality, eyeColor);
 
         return ResponseEntity.ok(stats);
-    }
-
-    private Color parseColor(String colorStr) {
-        try {
-            return Color.valueOf(colorStr.toUpperCase().trim());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidParameterException("color", colorStr,
-                    "Invalid color '" + colorStr + "'. Allowed values: GREEN, BLUE, ORANGE, BROWN");
-        } catch (NullPointerException e) {
-            throw new InvalidParameterException("color", null, "Color cannot be null");
-        }
-    }
-
-    private Country parseCountry(String countryStr) {
-        try {
-            return Country.valueOf(countryStr.toUpperCase().trim());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidParameterException("nationality", countryStr,
-                    "Invalid nationality '" + countryStr + "'. Allowed values: FRANCE, SPAIN, INDIA, THAILAND, SOUTH_KOREA");
-        } catch (NullPointerException e) {
-            throw new InvalidParameterException("nationality", null, "Nationality cannot be null");
-        }
     }
 }

@@ -15,7 +15,7 @@ import java.util.List;
 )
 public interface PersonServiceClient {
 
-    @GetMapping("/persons")
+    @GetMapping("/persons?page=0&size=1000000000")
     List<PersonDTO> getAllPersons();
 
     @GetMapping("/persons/{id}")
