@@ -13,10 +13,10 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class HttpsConfig {
 
-    @Value("${http.redirect.port:8081}")
+    @Value("${http.redirect.port:58124}")
     private int httpRedirectPort;
 
-    @Value("${server.port:8443}")
+    @Value("${server.port:58081}")
     private int httpsPort;
 
     @Bean
