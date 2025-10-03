@@ -13,11 +13,13 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import org.springframework.web.servlet.NoHandlerFoundException;
 import ru.itmo.demography_service.dto.ErrorDTO;
+import ru.itmo.demography_service.dto.ErrorsDto;
 import ru.itmo.demography_service.exception.InvalidParameterException;
 import ru.itmo.demography_service.exception.PersonServiceException;
 
 import java.net.SocketTimeoutException;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
@@ -36,7 +38,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "EXTERNAL_SERVICE_ERROR",
                 e.getMessage(),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -59,7 +61,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "EXTERNAL_SERVICE_ERROR",
                 determineFeignErrorMessage(e),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -76,7 +78,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "INVALID_REQUEST_PARAMETER",
                 e.getMessage(),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -107,7 +109,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "INVALID_PARAMETER_TYPE",
                 message,
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -115,7 +117,7 @@ public class GlobalExceptionHandler {
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<Map<String, Object>> handleValidationErrors(
+    public ResponseEntity<ErrorsDto> handleValidationErrors(
             MethodArgumentNotValidException e, HttpServletRequest request) {
 
         Map<String, String> errors = new HashMap<>();
@@ -125,14 +127,15 @@ public class GlobalExceptionHandler {
 
         log.warn("Validation errors: {}", errors);
 
-        Map<String, Object> response = new HashMap<>();
-        response.put("error", "VALIDATION_FAILED");
-        response.put("message", "Request body validation failed");
-        response.put("errors", errors);
-        response.put("timestamp", LocalDateTime.now());
-        response.put("path", request.getRequestURI());
+        ErrorsDto errorsDto = new ErrorsDto(
+                "VALIDATION_FAILED",
+                "Request body validation failed",
+                errors,
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
+                request.getRequestURI()
+        );
 
-        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(response);
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).body(errorsDto);
     }
 
     @ExceptionHandler(HttpMessageNotReadableException.class)
@@ -162,7 +165,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 errorCode,
                 message,
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -178,7 +181,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "ENDPOINT_NOT_FOUND",
                 String.format("No handler found for %s %s", e.getHttpMethod(), e.getRequestURL()),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -194,7 +197,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "TIMEOUT_ERROR",
                 "Timeout calling external service",
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -210,7 +213,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "INVALID_ARGUMENT",
                 e.getMessage(),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -228,7 +231,7 @@ public class GlobalExceptionHandler {
                         request.getRequestURI(),
                         e.getSupportedMethods() != null ?
                                 String.join(", ", e.getSupportedMethods()) : "none"),
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
@@ -244,7 +247,7 @@ public class GlobalExceptionHandler {
         ErrorDTO error = new ErrorDTO(
                 "INTERNAL_SERVER_ERROR",
                 "An unexpected error occurred. Please try again later.",
-                LocalDateTime.now(),
+                LocalDateTime.now().atZone(ZoneId.systemDefault()).toInstant(),
                 request.getRequestURI()
         );
 
