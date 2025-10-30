@@ -1,8 +1,14 @@
 package ru.itmo.dto;
 
+import lombok.*;
+
 import java.io.Serializable;
 
-public record CoordinatesDTO(
-        long x,
-        long y
-) implements Serializable {}
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class CoordinatesDTO implements Serializable {
+    long x;
+    long y;
+}

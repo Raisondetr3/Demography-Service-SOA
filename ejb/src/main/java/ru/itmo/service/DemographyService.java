@@ -12,14 +12,15 @@ import javax.inject.Inject;
 import java.util.List;
 import java.util.Objects;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Stateless
 public class DemographyService implements DemographyServiceRemote {
 
     private static final Logger log = Logger.getLogger(DemographyService.class.getName());
 
-    @Inject
-    private PersonServiceClient personServiceClient;
+//    @Inject
+    private final PersonServiceClient personServiceClient = new PersonServiceClient();
 
     public HairColorStatsDTO calculateHairColorPercentage(Color hairColor) {
         validateHairColor(hairColor);
@@ -36,7 +37,7 @@ public class DemographyService implements DemographyServiceRemote {
 
             long totalCount = allPersons.size();
             long colorCount = allPersons.stream()
-                    .filter(person -> Objects.equals(hairColor, person.hairColor()))
+                    .filter(person -> Objects.equals(hairColor, person.getHairColor()))
                     .count();
 
             double percentage = (colorCount * 100.0) / totalCount;
@@ -66,8 +67,8 @@ public class DemographyService implements DemographyServiceRemote {
             List<PersonDTO> allPersons = fetchAllPersons();
 
             List<PersonDTO> nationalityPersons = allPersons.stream()
-                    .filter(person -> Objects.equals(nationality, person.nationality()))
-                    .toList();
+                    .filter(person -> Objects.equals(nationality, person.getNationality()))
+                    .collect(Collectors.toList());
 
             if (nationalityPersons.isEmpty()) {
                 log.info("No persons found with nationality: " + nationality);
@@ -75,7 +76,7 @@ public class DemographyService implements DemographyServiceRemote {
             }
 
             long eyeColorCount = nationalityPersons.stream()
-                    .filter(person -> Objects.equals(eyeColor, person.eyeColor()))
+                    .filter(person -> Objects.equals(eyeColor, person.getEyeColor()))
                     .count();
 
             long totalNationalityCount = nationalityPersons.size();
@@ -109,13 +110,13 @@ public class DemographyService implements DemographyServiceRemote {
             }
 
             long colorCount = allPersons.stream()
-                    .filter(person -> person.hairColor() != null &&
-                            person.hairColor().equals(hairColor))
+                    .filter(person -> person.getHairColor() != null &&
+                            person.getHairColor().equals(hairColor))
                     .count();
 
             allPersons.stream()
-                    .filter(person -> person.hairColor() == null)
-                    .forEach(person -> log.warning("Found person with null hair color: id=" + person.id()));
+                    .filter(person -> person.getHairColor() == null)
+                    .forEach(person -> log.warning("Found person with null hair color: id=" + person.getId()));
 
             double percentage = (colorCount * 100.0) / allPersons.size();
 
@@ -156,13 +157,13 @@ public class DemographyService implements DemographyServiceRemote {
             }
 
             long nullNationalityCount = persons.stream()
-                    .filter(person -> person.nationality() == null)
+                    .filter(person -> person.getNationality() == null)
                     .count();
             long nullHairColorCount = persons.stream()
-                    .filter(person -> person.hairColor() == null)
+                    .filter(person -> person.getHairColor() == null)
                     .count();
             long nullEyeColorCount = persons.stream()
-                    .filter(person -> person.eyeColor() == null)
+                    .filter(person -> person.getEyeColor() == null)
                     .count();
 
             if (nullNationalityCount > 0 || nullHairColorCount > 0 || nullEyeColorCount > 0) {

@@ -2,9 +2,14 @@ package ru.itmo.client;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
+import lombok.SneakyThrows;
 import ru.itmo.dto.PersonDTO;
 
 import javax.ejb.Stateless;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
 import java.io.IOException;
 import java.net.URI;
 import java.net.http.HttpClient;
@@ -19,14 +24,25 @@ public class PersonServiceClient {
     private final HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
+    @SneakyThrows
     public PersonServiceClient() {
+        objectMapper.registerModule(new JavaTimeModule());
+        objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
+//        this.httpClient = HttpClient.newBuilder()
+//                .connectTimeout(Duration.ofSeconds(5))
+//                .build();
+
+        SSLContext sslContext = SSLContext.getInstance("TLS");
+        sslContext.init(null, new TrustManager[]{new UnsafeTrustManager()}, null);
+
         this.httpClient = HttpClient.newBuilder()
                 .connectTimeout(Duration.ofSeconds(5))
+                .sslContext(sslContext)
                 .build();
     }
 
     public List<PersonDTO> getAllPersons() {
-        String baseUrl = "http://localhost:58123";
+        String baseUrl = "https://localhost:58123";
         String uri = baseUrl + "/persons?page=0&size=1000000000";
 
         HttpRequest request = HttpRequest.newBuilder()

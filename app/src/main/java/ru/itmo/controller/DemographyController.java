@@ -1,18 +1,14 @@
 package ru.itmo.controller;
 
 
-import org.eclipse.microprofile.openapi.annotations.Operation;
-import org.eclipse.microprofile.openapi.annotations.media.Content;
-import org.eclipse.microprofile.openapi.annotations.media.ExampleObject;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponse;
-import org.eclipse.microprofile.openapi.annotations.responses.APIResponses;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import ru.itmo.dto.HairColorStatsDTO;
 import ru.itmo.dto.NationalityEyeColorStatsDTO;
 import ru.itmo.dto.enums.Color;
 import ru.itmo.dto.enums.Country;
+import ru.itmo.service.DemographyService;
 import ru.itmo.service.DemographyServiceRemote;
 
 import javax.ejb.EJB;
@@ -28,8 +24,8 @@ import java.util.logging.Logger;
 public class DemographyController {
     private static final Logger log = Logger.getLogger(DemographyController.class.getName());
 
-    @EJB
-    private DemographyServiceRemote demographyService;
+//    @EJB
+    private final DemographyServiceRemote demographyService = new DemographyService();
 
     @GET
     @Path("/test")
@@ -40,29 +36,6 @@ public class DemographyController {
         return Response.ok("test ok").build();
     }
 
-    @Operation(
-            summary = "Get percentage of people by hair color",
-            description = "Calculate percentage ratio of people with specified hair color relative to total population"
-    )
-    @APIResponses({
-            @APIResponse(responseCode = "200", description = "Statistics calculated successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = HairColorStatsDTO.class),
-                            examples = @ExampleObject(
-                                    name = "Hair Color Statistics",
-                                    value = """
-                                    {
-                                        "hairColor": "BLUE",
-                                        "percentage": 23.5,
-                                        "totalCount": 100,
-                                        "colorCount": 23
-                                    }
-                                    """
-                            ))
-            ),
-            @APIResponse(responseCode = "400", description = "Invalid hair color parameter",
-                    content = @Content(mediaType = "application/json"))
-    })
     @GET
     @Path("/hair-color/{hairColor}/percentage")
     public Response getHairColorPercentage(
@@ -76,29 +49,6 @@ public class DemographyController {
         return Response.ok(stats).build();
     }
 
-    @Operation(
-            summary = "Get statistics by nationality and eye color",
-            description = "Count the number of people with specific eye color within specified nationality"
-    )
-    @APIResponses({
-            @APIResponse(responseCode = "200", description = "Statistics calculated successfully",
-                    content = @Content(mediaType = "application/json",
-                            schema = @Schema(implementation = NationalityEyeColorStatsDTO.class),
-                            examples = @ExampleObject(
-                                    name = "Nationality Eye Color Statistics",
-                                    value = """
-                                    {
-                                        "nationality": "SPAIN",
-                                        "eyeColor": "GREEN",
-                                        "eyeColorCount": 15,
-                                        "totalNationalityCount": 45
-                                    }
-                                    """
-                            ))
-            ),
-            @APIResponse(responseCode = "400", description = "Invalid nationality or eye color parameters",
-                    content = @Content(mediaType = "application/json"))
-    })
     @GET
     @Path("/nationality/{nationality}/eye-color/{eyeColor}")
     public Response getNationalityEyeColorStats(
