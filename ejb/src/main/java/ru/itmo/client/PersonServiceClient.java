@@ -42,7 +42,8 @@ public class PersonServiceClient {
     }
 
     public List<PersonDTO> getAllPersons() {
-        String baseUrl = "https://localhost:58123";
+//        String baseUrl = "https://localhost:58123";
+        String baseUrl = "https://localhost:8080";
         String uri = baseUrl + "/persons?page=0&size=1000000000";
 
         HttpRequest request = HttpRequest.newBuilder()
