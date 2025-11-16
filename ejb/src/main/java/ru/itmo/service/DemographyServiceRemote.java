@@ -8,7 +8,7 @@ import ru.itmo.dto.enums.Country;
 import javax.ejb.Remote;
 import java.io.Serializable;
 
-@Remote
+//@Remote
 public interface DemographyServiceRemote extends Serializable {
 
     HairColorStatsDTO calculateHairColorPercentage(Color hairColor);

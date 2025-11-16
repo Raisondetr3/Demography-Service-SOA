@@ -8,6 +8,8 @@ import lombok.SneakyThrows;
 import ru.itmo.dto.PersonDTO;
 
 import javax.ejb.Stateless;
+import javax.annotation.PostConstruct;
+import javax.enterprise.context.ApplicationScoped;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import java.io.IOException;
@@ -18,14 +20,26 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 
-@Stateless
+//@Stateless
+@ApplicationScoped
 public class PersonServiceClient {
 
-    private final HttpClient httpClient;
+    private HttpClient httpClient;
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    @SneakyThrows
+    // Безаргументный public конструктор — ОБЯЗАТЕЛЕН для EJB
     public PersonServiceClient() {
+        // только super(); — никакой логики!
+//        init();
+    }
+
+    @SneakyThrows
+//    @PostConstruct
+    public void init() {
+        if (httpClient != null) return;
+//        log.info("Initializing PersonServiceClient");
+
+//    public PersonServiceClient() {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
 //        this.httpClient = HttpClient.newBuilder()
@@ -42,8 +56,9 @@ public class PersonServiceClient {
     }
 
     public List<PersonDTO> getAllPersons() {
-//        String baseUrl = "https://localhost:58123";
-        String baseUrl = "https://localhost:8080";
+        init();
+        String baseUrl = "https://localhost:58123";
+//        String baseUrl = "https://localhost:8080";
         String uri = baseUrl + "/persons?page=0&size=1000000000";
 
         HttpRequest request = HttpRequest.newBuilder()

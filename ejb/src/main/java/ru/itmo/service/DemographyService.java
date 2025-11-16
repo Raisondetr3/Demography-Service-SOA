@@ -7,6 +7,7 @@ import ru.itmo.dto.enums.Country;
 import ru.itmo.exception.InvalidParameterException;
 import ru.itmo.exception.PersonServiceException;
 
+import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;
@@ -17,10 +18,12 @@ import java.util.stream.Collectors;
 @Stateless
 public class DemographyService implements DemographyServiceRemote {
 
-    private static final Logger log = Logger.getLogger(DemographyService.class.getName());
+    static Logger log = Logger.getLogger(DemographyService.class.getName());
 
-//    @Inject
-    private final PersonServiceClient personServiceClient = new PersonServiceClient();
+    //    @EJB
+    @Inject
+    private PersonServiceClient personServiceClient;
+//    PersonServiceClient personServiceClient = new PersonServiceClient();
 
     public HairColorStatsDTO calculateHairColorPercentage(Color hairColor) {
         validateHairColor(hairColor);

@@ -9,7 +9,9 @@
         <version>0.0.1-SNAPSHOT</version>
     </parent>
 
-    <artifactId>app</artifactId>
+    <artifactId>demography-service-app</artifactId>
+    <version>0.0.1-SNAPSHOT</version>
+    <name>demography-service-app</name>
     <packaging>war</packaging>
 
     <properties>
@@ -45,9 +47,10 @@
 
         <dependency>
             <groupId>ru.itmo</groupId>
-            <artifactId>ejb</artifactId>
+            <artifactId>demography-service-ejb</artifactId>
             <version>0.0.1-SNAPSHOT</version>
-<!--            <scope>provided</scope>-->
+<!--            <type>war</type>-->
+<!--            <scope>compile</scope>-->
         </dependency>
     </dependencies>
 
@@ -60,6 +63,53 @@
                 <version>3.3.2</version>
                 <configuration>
                     <failOnMissingWebXml>false</failOnMissingWebXml>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.6.1</version>
+                <configuration>
+                    <source>${java.version}</source>
+                    <target>${java.version}</target>
+                    <annotationProcessorPaths>
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok</artifactId>
+                            <version>1.18.22</version>
+                        </path>
+                        <!-- This is needed when using Lombok 1.18.16 and above -->
+                        <path>
+                            <groupId>org.projectlombok</groupId>
+                            <artifactId>lombok-mapstruct-binding</artifactId>
+                            <version>0.2.0</version>
+                        </path>
+                        <path>
+                            <groupId>com.fasterxml.jackson.datatype</groupId>
+                            <artifactId>jackson-datatype-jsr310</artifactId>
+                            <version>2.14.0</version>
+                        </path>
+                        <path>
+                            <groupId>com.fasterxml.jackson.core</groupId>
+                            <artifactId>jackson-databind</artifactId>
+                            <version>2.14.0</version>
+                        </path>
+                        <path>
+                            <groupId>org.jboss.resteasy</groupId>
+                            <artifactId>resteasy-jackson-provider</artifactId>
+                            <version>3.0.16.Final</version>
+                        </path>
+                    </annotationProcessorPaths>
+                    <compilerArgs>
+                        <arg>-Amapstruct.defaultComponentModel=cdi</arg>
+                        <arg>--add-opens=java.base/java.io=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.base/java.lang=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.base/java.util=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.base/java.util.concurrent=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.base/java.security=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.base/java.text=ALL-UNNAMED</arg>
+                        <arg>--add-opens=java.desktop/java.awt.font=ALL-UNNAMED</arg>
+                    </compilerArgs>
                 </configuration>
             </plugin>
         </plugins>

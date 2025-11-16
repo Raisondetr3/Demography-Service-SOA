@@ -4,12 +4,14 @@ package ru.itmo.controller;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
+import ru.itmo.config.JNDIConfig;
 import ru.itmo.dto.HairColorStatsDTO;
 import ru.itmo.dto.NationalityEyeColorStatsDTO;
 import ru.itmo.dto.enums.Color;
 import ru.itmo.dto.enums.Country;
 import ru.itmo.service.DemographyService;
 import ru.itmo.service.DemographyServiceRemote;
+
 
 import javax.ejb.EJB;
 import javax.ws.rs.*;
@@ -22,10 +24,17 @@ import java.util.logging.Logger;
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Demography", description = "Demographic analysis of population")
 public class DemographyController {
-    private static final Logger log = Logger.getLogger(DemographyController.class.getName());
+    static Logger log = Logger.getLogger(DemographyController.class.getName());
+
+    @EJB
+    DemographyServiceRemote demographyService;
+//    DemographyServiceRemote demographyService = JNDIConfig.demographyService();
+//    private final DemographyServiceRemote demographyService = new DemographyService();
+//    @EJB(lookup = "ejb:/demography-service-ejb/DemographyService!ru.itmo.service.DemographyServiceRemote")
+//    DemographyServiceRemote demographyService;
 
 //    @EJB
-    private final DemographyServiceRemote demographyService = new DemographyService();
+//    private TestService testService;
 
     @GET
     @Path("/test")
