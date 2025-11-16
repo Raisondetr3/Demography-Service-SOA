@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 @ApplicationPath("/api")
 public class RestApplication extends Application {
-    private static final Logger log = Logger.getLogger(RestApplication.class.getName());
+    static Logger log = Logger.getLogger(RestApplication.class.getName());
 
     public RestApplication() {
         log.info("RESTEasy started! Registered controllers: PingController, DemographyController");

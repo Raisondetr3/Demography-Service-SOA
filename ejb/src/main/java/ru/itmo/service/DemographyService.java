@@ -25,6 +25,7 @@ public class DemographyService implements DemographyServiceRemote {
     private PersonServiceClient personServiceClient;
 //    PersonServiceClient personServiceClient = new PersonServiceClient();
 
+    @Override
     public HairColorStatsDTO calculateHairColorPercentage(Color hairColor) {
         validateHairColor(hairColor);
 
@@ -58,6 +59,7 @@ public class DemographyService implements DemographyServiceRemote {
         }
     }
 
+    @Override
     public NationalityEyeColorStatsDTO calculateNationalityEyeColorStats(
             Country nationality, Color eyeColor) {
 
@@ -102,6 +104,7 @@ public class DemographyService implements DemographyServiceRemote {
         }
     }
 
+    @Override
     public HairColorStatsDTO calculateHairColorPercentageWithExplicitValidation(Color hairColor) {
         validateHairColor(hairColor);
 

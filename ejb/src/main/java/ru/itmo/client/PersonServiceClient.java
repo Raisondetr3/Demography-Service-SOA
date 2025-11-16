@@ -24,8 +24,8 @@ import java.util.List;
 @ApplicationScoped
 public class PersonServiceClient {
 
-    private HttpClient httpClient;
-    private final ObjectMapper objectMapper = new ObjectMapper();
+    HttpClient httpClient;
+    ObjectMapper objectMapper = new ObjectMapper();
 
     // Безаргументный public конструктор — ОБЯЗАТЕЛЕН для EJB
     public PersonServiceClient() {

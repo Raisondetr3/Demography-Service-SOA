@@ -6,7 +6,7 @@ import javax.servlet.*;
 import javax.servlet.http.*;
 
 public class TestServlet extends HttpServlet {
-    private static final Logger log = Logger.getLogger(TestServlet.class.getName());
+    static Logger log = Logger.getLogger(TestServlet.class.getName());
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)

@@ -14,6 +14,7 @@ import ru.itmo.service.DemographyServiceRemote;
 
 
 import javax.ejb.EJB;
+import javax.naming.NamingException;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
@@ -26,15 +27,10 @@ import java.util.logging.Logger;
 public class DemographyController {
     static Logger log = Logger.getLogger(DemographyController.class.getName());
 
-    @EJB
-    DemographyServiceRemote demographyService;
-//    DemographyServiceRemote demographyService = JNDIConfig.demographyService();
-//    private final DemographyServiceRemote demographyService = new DemographyService();
-//    @EJB(lookup = "ejb:/demography-service-ejb/DemographyService!ru.itmo.service.DemographyServiceRemote")
-//    DemographyServiceRemote demographyService;
+    DemographyServiceRemote demographyService = JNDIConfig.demographyService();
 
-//    @EJB
-//    private TestService testService;
+    public DemographyController() throws NamingException {
+    }
 
     @GET
     @Path("/test")
