@@ -7,7 +7,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import lombok.SneakyThrows;
 import ru.itmo.dto.PersonDTO;
 
-import javax.ejb.Stateless;
 import javax.annotation.PostConstruct;
 import javax.enterprise.context.ApplicationScoped;
 import javax.net.ssl.SSLContext;
@@ -20,31 +19,21 @@ import java.net.http.HttpResponse;
 import java.time.Duration;
 import java.util.List;
 
-//@Stateless
 @ApplicationScoped
 public class PersonServiceClient {
 
     HttpClient httpClient;
     ObjectMapper objectMapper = new ObjectMapper();
 
-    // Безаргументный public конструктор — ОБЯЗАТЕЛЕН для EJB
     public PersonServiceClient() {
-        // только super(); — никакой логики!
-//        init();
+
     }
 
     @SneakyThrows
-//    @PostConstruct
+    @PostConstruct
     public void init() {
-        if (httpClient != null) return;
-//        log.info("Initializing PersonServiceClient");
-
-//    public PersonServiceClient() {
         objectMapper.registerModule(new JavaTimeModule());
         objectMapper.disable(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS);
-//        this.httpClient = HttpClient.newBuilder()
-//                .connectTimeout(Duration.ofSeconds(5))
-//                .build();
 
         SSLContext sslContext = SSLContext.getInstance("TLS");
         sslContext.init(null, new TrustManager[]{new UnsafeTrustManager()}, null);
@@ -56,9 +45,8 @@ public class PersonServiceClient {
     }
 
     public List<PersonDTO> getAllPersons() {
-        init();
-        String baseUrl = "https://localhost:58123";
-//        String baseUrl = "https://localhost:8080";
+//        String baseUrl = "https://localhost:58123";
+        String baseUrl = "https://localhost:8080";
         String uri = baseUrl + "/persons?page=0&size=1000000000";
 
         HttpRequest request = HttpRequest.newBuilder()

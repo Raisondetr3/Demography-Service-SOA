@@ -4,12 +4,10 @@ package ru.itmo.controller;
 import org.eclipse.microprofile.openapi.annotations.media.Schema;
 import org.eclipse.microprofile.openapi.annotations.parameters.Parameter;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
-import ru.itmo.config.JNDIConfig;
 import ru.itmo.dto.HairColorStatsDTO;
 import ru.itmo.dto.NationalityEyeColorStatsDTO;
 import ru.itmo.dto.enums.Color;
 import ru.itmo.dto.enums.Country;
-import ru.itmo.service.DemographyService;
 import ru.itmo.service.DemographyServiceRemote;
 
 
@@ -25,9 +23,10 @@ import java.util.logging.Logger;
 @Consumes(MediaType.APPLICATION_JSON)
 @Tag(name = "Demography", description = "Demographic analysis of population")
 public class DemographyController {
-    static Logger log = Logger.getLogger(DemographyController.class.getName());
+    private static final Logger log = Logger.getLogger(DemographyController.class.getName());
 
-    DemographyServiceRemote demographyService = JNDIConfig.demographyService();
+    @EJB(lookup = "ejb:/ejb/DemographyService!ru.itmo.service.DemographyServiceRemote")
+    private DemographyServiceRemote demographyService;
 
     public DemographyController() throws NamingException {
     }

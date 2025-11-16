@@ -1,5 +1,6 @@
 package ru.itmo.service;
 
+import org.jboss.ejb3.annotation.Pool;
 import ru.itmo.client.PersonServiceClient;
 import ru.itmo.dto.*;
 import ru.itmo.dto.enums.Color;
@@ -7,7 +8,6 @@ import ru.itmo.dto.enums.Country;
 import ru.itmo.exception.InvalidParameterException;
 import ru.itmo.exception.PersonServiceException;
 
-import javax.ejb.EJB;
 import javax.ejb.Stateless;
 import javax.inject.Inject;
 import java.util.List;
@@ -16,14 +16,13 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 @Stateless
+@Pool("slsb-strict-max-pool")
 public class DemographyService implements DemographyServiceRemote {
 
     static Logger log = Logger.getLogger(DemographyService.class.getName());
 
-    //    @EJB
     @Inject
     private PersonServiceClient personServiceClient;
-//    PersonServiceClient personServiceClient = new PersonServiceClient();
 
     @Override
     public HairColorStatsDTO calculateHairColorPercentage(Color hairColor) {
